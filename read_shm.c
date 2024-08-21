@@ -9,16 +9,6 @@
 #define SHM_PERMISSIONS 0666 // Permissões para o segmento de memória
 #define SHM_FILE_PATH "shmfile" // Caminho usado para gerar a chave
 
-// Função para gerar uma chave única baseada em um caminho e um ID de projeto
-key_t get_shared_memory_key(const char *path, int proj_id) {
-    key_t key = ftok(path, proj_id);
-    if (key == -1) {
-        perror("Erro ao gerar chave com ftok");
-        exit(EXIT_FAILURE);
-    }
-    return key;
-}
-
 // Função para criar ou obter um segmento de memória compartilhada
 int create_or_get_shared_memory(key_t key, size_t size, int permissions) {
     int shmid = shmget(key, size, permissions | IPC_CREAT);
@@ -56,8 +46,9 @@ void remove_shared_memory(int shmid) {
 }
 
 int main() {
+
     // Gerar chave única para memória compartilhada
-    key_t key = get_shared_memory_key(SHM_FILE_PATH, 65);
+    key_t key = ftok(SHM_FILE_PATH, 65);
 
     // Criar ou obter segmento de memória compartilhada
     int shmid = create_or_get_shared_memory(key, SHM_SIZE, SHM_PERMISSIONS);
