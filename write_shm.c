@@ -12,10 +12,7 @@
 // Função para gerar uma chave única baseada em um caminho e um ID de projeto
 key_t get_shared_memory_key(const char *path, int proj_id) {
     key_t key = ftok(path, proj_id);
-    if (key == -1) {
-        perror("Erro ao gerar chave com ftok");
-        exit(EXIT_FAILURE);
-    }
+
     return key;
 }
 
@@ -48,8 +45,9 @@ void detach_shared_memory(const char *shmaddr) {
 }
 
 int main() {
+
     // Gerar chave única para memória compartilhada
-    key_t key = get_shared_memory_key(SHM_FILE_PATH, 65);
+    key_t key = ftok(SHM_FILE_PATH, 65);
 
     // Criar ou obter segmento de memória compartilhada
     int shmid = create_or_get_shared_memory(key, SHM_SIZE, SHM_PERMISSIONS);
